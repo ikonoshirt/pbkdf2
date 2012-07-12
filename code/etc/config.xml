@@ -31,7 +31,15 @@
                 <!-- Overwrite the Core Encryption Model -->
                 <encryption_model>Ikonoshirt_Pbkdf2_Model_Encryption</encryption_model>
             </core>
+            <ikonoshirt_pbkdf2>
+                <class>Ikonoshirt_Pbkdf2_Helper</class>
+            </ikonoshirt_pbkdf2>
         </helpers>
+        <models>
+            <ikonoshirt_pbkdf2>
+                <class>Ikonoshirt_Pbkdf2_Model</class>
+            </ikonoshirt_pbkdf2>
+        </models>
         <resources>
             <pbkdf2_setup>
                 <setup>
