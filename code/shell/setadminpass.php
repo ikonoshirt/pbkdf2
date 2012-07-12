@@ -8,18 +8,21 @@ class Ikonoshirt_Pbkdf2_Shell_SetAdminPass extends Mage_Shell_Abstract
 {
     public function run()
     {
-        Mage::setIsDeveloperMode(true);
+        if (empty($this->_args)) {
+            die($this->usageHelp());
+        }
+
         $login = $this->getArg('user');
         $pass  = $this->getArg('pass');
 
-        if (false === $pass) {
-            $pass = $this->_askPass();
+        $user = $this->_getUser($login);
+        if (! $user->getId()) {
+            fwrite(STDERR, sprintf("Unknown admin login: %s\n", $login));
+            exit(2);
         }
 
-        $user = $this->getUser($login);
-        if (! $user->getId()) {
-            fwrite(STDERR, sprintf("Unknown admin user: %s\n", $user));
-            exit(2);
+        if (false === $pass) {
+            $pass = $this->_askPass();
         }
 
         $user->setNewPassword($pass)->save();
@@ -47,9 +50,22 @@ class Ikonoshirt_Pbkdf2_Shell_SetAdminPass extends Mage_Shell_Abstract
      * @param string $login
      * @return Mage_Admin_Model_User
      */
-    protected function getUser($login)
+    protected function _getUser($login)
     {
         return Mage::getModel('admin/user')->loadByUsername($login);
+    }
+
+    public function usageHelp()
+    {
+        return <<<USAGE
+Usage:  php shell/setadminpass.php --user <loginname> [--pass <newpass>]
+
+  --user <loginname>   Admin user login name
+  --pass <newpass>     New password, optional
+                       If omitted, the script asks for the new password.
+
+
+USAGE;
     }
 }
 
