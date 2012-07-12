@@ -21,7 +21,6 @@ class Ikonoshirt_Pbkdf2_Shell_SetAdminPass extends Mage_Shell_Abstract
             $pass = $this->_askPass();
         }
 
-
         $user->setNewPassword($pass)->save();
 
         echo "Password updated\n";
