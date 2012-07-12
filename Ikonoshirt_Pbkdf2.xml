@@ -4,6 +4,10 @@
         <Ikonoshirt_Pbkdf2>
             <active>true</active>
             <codePool>community</codePool>
+            <depends>
+                <Mage_Core/>
+                <Mage_Admin />
+            </depends>
         </Ikonoshirt_Pbkdf2>
     </modules>
 </config>
