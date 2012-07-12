@@ -6,22 +6,24 @@
         </Ikonoshirt_Pbkdf2>
     </modules>
     <default>
-        <encryption>
-            <!-- http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf -->
-            <!-- Iterations used for the PBKDF2-->
-            <iterations>10000</iterations>
-            <!-- Used hash algo, checked agains hash_algos() -->
-            <!-- http://de2.php.net/hash_algos -->
-            <hash_algorithm>sha512</hash_algorithm>
-            <!-- Length of the key saved in the database -->
-            <!-- Attention! This is the binary value, the hex-string is two times that length! -->
-            <key_length>256</key_length>
-            <!-- Length of the salt used, >= 8 recommended -->
-            <salt_length>16</salt_length>
-            <!-- If you have a running shop, all password hashes of the user were encrypted with PBKDF2.
-             You have to activate this option to check for the old hash too. -->
-            <check_md5>0</check_md5>
-        </encryption>
+        <ikonoshirt>
+            <pbkdf2>
+                <!-- http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf -->
+                <!-- Iterations used for the PBKDF2 -->
+                <iterations>10000</iterations>
+                <!-- Used hash algo, checked agains hash_algos() -->
+                <!-- http://de2.php.net/hash_algos -->
+                <hash_algorithm>sha512</hash_algorithm>
+                <!-- Length of the key saved in the database -->
+                <!-- Attention! This is the binary value, the hex-string is two times that length! -->
+                <key_length>256</key_length>
+                <!-- Length of the salt used, >= 8 recommended -->
+                <salt_length>16</salt_length>
+                <!-- If you have a running shop, all password hashes of the user were encrypted with PBKDF2. -->
+                <!-- You have to activate this option to check for the old hash too. -->
+                <check_legacy_hash>1</check_legacy_hash>
+            </pbkdf2>
+        </ikonoshirt>
     </default>
     <global>
         <helpers>
