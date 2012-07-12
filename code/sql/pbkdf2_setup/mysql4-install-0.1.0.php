@@ -4,16 +4,33 @@ $installer = $this;
 
 $installer->startSetup();
 
-$installer->getConnection()->modifyColumn($installer->getTable('admin/user'),
-    'password', 'VARCHAR(800) default NULL');
+$installer->getConnection()->modifyColumn(
+    $installer->getTable('admin/user'), 'password', 'VARCHAR(800) default NULL'
+);
 
-$select = $installer->getConnection()->select();
-$select->from($installer->getTable('eav/entity_type'), 'entity_type_id')->where('entity_type_code = ?', 'customer');
-$id = $installer->getConnection()->fetchOne($select);
+$newAttribute = Mage::getSingleton('eav/config')->getAttribute('customer', 'password_hash');
+$currentAttribute = clone $newAttribute;
+if ('text' !== $currentAttribute->getBackendType()) {
+    $newAttribute = clone $currentAttribute;
+    $newAttribute->setBackendType('text');
 
-$installer->getConnection()->update($installer->getTable('eav/attribute'), array('backend_type' => 'text'), "attribute_code = 'password_hash' AND entity_type_id = $id");
+    $currentTable = $currentAttribute->getBackend()->getTable();
+    $newTable = $newAttribute->getBackend()->getTable();
 
-// TODO copy all passwords to the eav_entity_text table and encrypt the hashes with PBKDF2
+    // Copy password hashes over to the text attribute value table
+    $cols = array('entity_type_id', 'attribute_id', 'entity_id', 'value');
+    $sql = $installer->getConnection()->select()
+            ->from($currentTable, $cols)
+            ->where('attribute_id=?', $currentAttribute->getId())
+            ->insertFromSelect($newTable, $cols);
+    $installer->getConnection()->query($sql);
 
+    $installer->updateAttribute('customer', 'password_hash', 'backend_type', 'text');
+
+    // Delete values from old value table
+    $installer->getConnection()->delete($currentTable, array('attribute_id=?' => $currentAttribute->getId()));
+}
+
+// TODO encrypt the hashes with PBKDF2
 
 $installer->endSetup();

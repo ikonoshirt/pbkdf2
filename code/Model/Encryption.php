@@ -2,20 +2,20 @@
 class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
 {
 
-    protected $iterations = 10000;
-    protected $hash_algorithm = 'sha512';
-    protected $key_length = 256;
-    protected $salt_length = 16;
-    protected $check_md5 = false;
+    protected $_iterations = 10000;
+    protected $_hashAlgorithm = 'sha512';
+    protected $_keyLength = 256;
+    protected $_saltLength = 16;
+    protected $_checkMd5 = false;
 
 
     function __construct()
     {
-        $this->iterations = Mage::getStoreConfig('encryption/iterations');
-        $this->hash_algorithm = Mage::getStoreConfig('encryption/hash_algorithm');
-        $this->key_length = (int)Mage::getStoreConfig('encryption/key_length');
-        $this->salt_length = (int)Mage::getStoreConfig('encryption/salt_length');
-        $this->check_md5 = (boolean)Mage::getStoreConfig('encryption/check_md5');
+        $this->_iterations = Mage::getStoreConfig('encryption/iterations');
+        $this->_hashAlgorithm = Mage::getStoreConfig('encryption/hash_algorithm');
+        $this->_keyLength = (int)Mage::getStoreConfig('encryption/key_length');
+        $this->_saltLength = (int)Mage::getStoreConfig('encryption/salt_length');
+        $this->_checkMd5 = (boolean)Mage::getStoreConfig('encryption/check_md5');
     }
 
 
@@ -33,20 +33,20 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
      */
     public function getHash($password, $salt = false)
     {
-        if ($salt === false) {
+        if (false === $salt) {
             // if no salt was passed, use the old method
             return $this->hash($password);
         }
 
         if (is_integer($salt)) {
-            if ($salt < $this->salt_length) {
-                Mage::log('Changed salt length from ' . $salt . ' to ' . $this->salt_length . '.');
-                $salt = $this->salt_length;
+            if ($salt < $this->_saltLength) {
+                //Mage::log('Changed salt length from ' . $salt . ' to ' . $this->_saltLength . '.');
+                $salt = $this->_saltLength;
             }
             $salt = $this->_helper->getRandomString($salt);
         }
 
-        return $this->pbkdf2($this->hash_algorithm, $password, $salt, $this->iterations, $this->key_length) . ':' . $salt;
+        return $this->_pbkdf2($this->_hashAlgorithm, $password, $salt, $this->_iterations, $this->_keyLength) . ':' . $salt;
     }
 
     /**
@@ -64,7 +64,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
             case 1:
                 return $this->hash($password) === $hash;
             case 2:
-                return $this->pbkdf2($this->hash_algorithm, $password, $hashArr[1], $this->iterations, $this->key_length) === $hashArr[0];
+                return $this->_pbkdf2($this->_hashAlgorithm, $password, $hashArr[1], $this->_iterations, $this->_keyLength) === $hashArr[0];
             // TODO implement a method to encrypt all MD5 hashes with PBKDF2 and validate them too.
         }
         Mage::throwException('Invalid hash.');
@@ -85,14 +85,14 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
     * This implementation of PBKDF2 was originally created by defuse.ca
     * With improvements by variations-of-shadow.com
     */
-    protected function pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
+    protected function _pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
     {
-        Mage::log('hashed');
+        //Mage::log('hashed');
         $algorithm = strtolower($algorithm);
         if (!in_array($algorithm, hash_algos(), true))
-            die('PBKDF2 ERROR: Invalid hash algorithm.');
+            Mage::throwException('PBKDF2 ERROR: Invalid hash algorithm ' . $algorithm);
         if ($count <= 0 || $key_length <= 0)
-            die('PBKDF2 ERROR: Invalid parameters.');
+            Mage::throwException('PBKDF2 ERROR: Invalid parameters.');
 
         $hash_length = strlen(hash($algorithm, "", true));
         $block_count = ceil($key_length / $hash_length);
