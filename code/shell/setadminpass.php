@@ -8,19 +8,19 @@ class Ikonoshirt_Pbkdf2_Shell_SetAdminPass extends Mage_Shell_Abstract
 {
     public function run()
     {
-        Mage::setIsDeveloperMode(true);
         $login = $this->getArg('user');
         $pass  = $this->getArg('pass');
+
+        $user = $this->_getUser($login);
+        if (! $user->getId()) {
+            fwrite(STDERR, sprintf("Unknown admin login: %s\n", $login));
+            exit(2);
+        }
 
         if (false === $pass) {
             $pass = $this->_askPass();
         }
 
-        $user = $this->getUser($login);
-        if (! $user->getId()) {
-            fwrite(STDERR, sprintf("Unknown admin user: %s\n", $user));
-            exit(2);
-        }
 
         $user->setNewPassword($pass)->save();
 
@@ -47,7 +47,7 @@ class Ikonoshirt_Pbkdf2_Shell_SetAdminPass extends Mage_Shell_Abstract
      * @param string $login
      * @return Mage_Admin_Model_User
      */
-    protected function getUser($login)
+    protected function _getUser($login)
     {
         return Mage::getModel('admin/user')->loadByUsername($login);
     }
