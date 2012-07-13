@@ -66,7 +66,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
                 return $this->hash($password) === $hash;
             case 2:
                 $result = $this->_pbkdf2($this->_hashAlgorithm, $password, $hashArr[1], $this->_iterations, $this->_keyLength) === $hashArr[0];
-                if (!$result && $this->_checkLegacy) {
+                if (!$result && ! Mage::app()->getStore()->isAdmin() && $this->_checkLegacy) {
                     if ($result = parent::validateHash($password, $hash)) {
                         // Update the customers password hash to pbkdf2
                         // Further processing is done in the observer
