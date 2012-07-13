@@ -1,15 +1,53 @@
 <?php
 class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
 {
+    /**
+     * pbkdf2 iterations
+     * default 10000
+     *
+     * @var integer
+     */
+    protected $_iterations;
 
-    protected $_iterations = 10000;
-    protected $_hashAlgorithm = 'sha512';
-    protected $_keyLength = 256;
-    protected $_saltLength = 16;
-    protected $_checkLegacy = false;
+    /**
+     * pbkdf2 hash algorithm
+     * default sha512
+     *
+     * @var string
+     */
+    protected $_hashAlgorithm;
+
+    /**
+     * pbkdf2 key length
+     * default 256
+     *
+     * @var integer
+     */
+    protected $_keyLengt;
+
+    /**
+     * pbkdf2 salt length
+     * default 16, should be at least 8
+     *
+     * @var integer
+     */
+    protected $_saltLength;
+
+    /**
+     * pbkdf2 legacy check to support old md5 hashes
+     * default false
+     *
+     * @var boolean
+     */
+    protected $_checkLegacy;
 
 
-    function __construct()
+    /**
+     * overwrite default attributes with configuration settings
+     *
+     * @return void
+     */
+    public function __construct()
     {
         $this->_iterations = (int) Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
         $this->_hashAlgorithm = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
@@ -23,22 +61,23 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
      * Generate a [salted] hash.
      *
      * $salt can be:
-     * false - a random will be generated
+     * false - old Mage_Core_Model_Encryption::hash() function will be used
      * integer - a random with specified length will be generated
-     * string
+     * string - use the given salt for _pbkdf2
      *
-     * @param string $password
+     * @param string $plaintext
      * @param mixed $salt
      * @return string
      */
-    public function getHash($password, $salt = false)
+    public function getHash($plaintext, $salt = false)
     {
         if (false === $salt) {
             // if no salt was passed, use the old method
-            return $this->hash($password);
+            return $this->hash($plaintext);
         }
 
         if (is_integer($salt)) {
+            // check for minimum length
             if ($salt < $this->_saltLength) {
                 //Mage::log('Changed salt length from ' . $salt . ' to ' . $this->_saltLength . '.');
                 $salt = $this->_saltLength;
@@ -46,7 +85,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
             $salt = $this->_helper->getRandomString($salt);
         }
 
-        return $this->_pbkdf2($this->_hashAlgorithm, $password, $salt, $this->_iterations, $this->_keyLength) . ':' . $salt;
+        return $this->_pbkdf2($this->_hashAlgorithm, $plaintext, $salt, $this->_iterations, $this->_keyLength) . ':' . $salt;
     }
 
     /**
@@ -54,7 +93,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
      *
      * @param string $password
      * @param string $hash
-     * @return bool
+     * @return void|boolean
      * @throws Exception
      */
     public function validateHash($password, $hash)
@@ -91,7 +130,6 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
     */
     protected function _pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
     {
-        //Mage::log('hashed');
         $algorithm = strtolower($algorithm);
         if (!in_array($algorithm, hash_algos(), true))
             Mage::throwException('PBKDF2 ERROR: Invalid hash algorithm ' . $algorithm);
