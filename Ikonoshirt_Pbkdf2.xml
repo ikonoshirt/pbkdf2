@@ -5,8 +5,9 @@
             <active>true</active>
             <codePool>community</codePool>
             <depends>
-                <Mage_Core/>
+                <Mage_Core />
                 <Mage_Admin />
+                <Mage_Customer />
             </depends>
         </Ikonoshirt_Pbkdf2>
     </modules>
