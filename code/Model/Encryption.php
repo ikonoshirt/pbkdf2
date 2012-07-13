@@ -97,6 +97,11 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
         $hash_length = strlen(hash($algorithm, "", true));
         $block_count = ceil($key_length / $hash_length);
 
+        // See Section 5.2 of the RFC 2898
+        if ($key_length > (pow(2,32) -1) * $hash_length) {
+            Mage::throwException('PBKDF2 ERROR: Invalid parameter: derived key too long.');
+        }
+
         $output = "";
         for ($i = 1; $i <= $block_count; $i++) {
             // $i encoded as 4 bytes, big endian.
