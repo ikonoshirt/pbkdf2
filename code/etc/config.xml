@@ -51,6 +51,17 @@
                 </connection>
             </pbkdf2_setup>
         </resources>
+        <events>
+            <customer_customer_authenticated>
+                <observers>
+                    <addCustomOptionWhileEditing>
+                        <type>singleton</type>
+                        <class>ikonoshirt_pbkdf2/observer</class>
+                        <method>customer_customer_authenticated</method>
+                    </addCustomOptionWhileEditing>
+                </observers>
+            </customer_customer_authenticated>
+        </events>
     </global>
 </config>
         

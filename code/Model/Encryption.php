@@ -59,6 +59,10 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
      */
     public function validateHash($password, $hash)
     {
+        if($this->_checkLegacy && strlen($hash) != $this->_keyLength) {
+            return parent::validateHash($password, $hash);
+        }
+
         $hashArr = explode(':', $hash);
         switch (count($hashArr)) {
             case 1:
