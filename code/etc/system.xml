@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tabs>
+        <ikonoshirt translate="label" module="ikonoshirt_pbkdf2">
+            <label>Ikonoshirt</label>
+            <sort_order>506</sort_order>
+        </ikonoshirt>
+    </tabs>
+    <sections>
+        <ikonoshirt translate="label" module="ikonoshirt_pbkdf2">
+            <label>PBKDF2 Hashing</label>
+            <tab>ikonoshirt</tab>
+            <sort_order>120</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>0</show_in_website>
+            <show_in_store>0</show_in_store>
+            <groups>
+                <pbkdf2 translate="label" module="ikonoshirt_pbkdf2">
+                    <label>General</label>
+                    <comment><![CDATA[The defaults should be okay, only change them if you are sure you know what you are doing.<br/>Do not change any settings after live deployment.]]></comment>
+                    <expanded>1</expanded>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <disclaimer translate="label comment" module="ikonoshirt_pbkdf2">
+                            <label>Display advanced options</label>
+                            <comment>Enable only if you know what you are doing.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </disclaimer>
+                        <iterations translate="label comment" module="ikonoshirt_pbkdf2">
+                            <label>Iterations</label>
+                            <comment>Iterations for PBKDF2 key derivation, >= 1000 recomended</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <disclaimer>1</disclaimer>
+                            </depends>
+                        </iterations>
+                        <salt_length translate="label comment" module="ikonoshirt_pbkdf2">
+                            <label>Salt Length</label>
+                            <comment><![CDATA[Length of the salt used, >= 8 recommended]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <disclaimer>1</disclaimer>
+                            </depends>
+                        </salt_length>
+                        <key_length translate="label comment" module="ikonoshirt_pbkdf2">
+                            <label>Key Length</label>
+                            <comment>This is the binary value, the stored hex-string is two times that length!</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <disclaimer>1</disclaimer>
+                            </depends>
+                        </key_length>
+                        <hash_algorithm translate="label comment" module="ikonoshirt_pbkdf2">
+                            <label>Hash Algorithm</label>
+                            <comment>The recomended algorithm is sha512</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ikonoshirt_pbkdf2/system_config_source_hash_algo</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <disclaimer>1</disclaimer>
+                            </depends>
+                        </hash_algorithm>
+                        <!-- not yet implemented
+                        <check_legacy_hash translate="label comment" module="ikonoshirt_pbkdf2">
+                            <label><![CDATA[Check & convert legacy hashes]]></label>
+                            <comment>Enable if your store has existing customers</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </check_legacy_hash>
+                        -->
+                    </fields>
+                </pbkdf2>
+            </groups>
+        </ikonoshirt>
+    </sections>
+</config>

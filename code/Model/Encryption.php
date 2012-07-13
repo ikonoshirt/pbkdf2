@@ -6,16 +6,16 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
     protected $_hashAlgorithm = 'sha512';
     protected $_keyLength = 256;
     protected $_saltLength = 16;
-    protected $_checkMd5 = false;
+    protected $_checkLegacy = false;
 
 
     function __construct()
     {
-        $this->_iterations = Mage::getStoreConfig('encryption/iterations');
-        $this->_hashAlgorithm = Mage::getStoreConfig('encryption/hash_algorithm');
-        $this->_keyLength = (int)Mage::getStoreConfig('encryption/key_length');
-        $this->_saltLength = (int)Mage::getStoreConfig('encryption/salt_length');
-        $this->_checkMd5 = (boolean)Mage::getStoreConfig('encryption/check_md5');
+        $this->_iterations = (int) Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
+        $this->_hashAlgorithm = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
+        $this->_keyLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
+        $this->_saltLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/salt_length');
+        $this->_checkLegacy = (boolean)Mage::getStoreConfig('ikonoshirt/pbkdf2/check_legacy_hash');
     }
 
 
