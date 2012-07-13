@@ -52,5 +52,18 @@
             </pbkdf2_setup>
         </resources>
     </global>
+    <frontend>
+        <events>
+            <customer_customer_authenticated>
+                <observers>
+                    <ikonoshirt_pbkdf2>
+                        <type>model</type>
+                        <class>ikonoshirt_pbkdf2/observer</class>
+                        <method>customerCustomerAuthenticated</method>
+                    </ikonoshirt_pbkdf2>
+                </observers>
+            </customer_customer_authenticated>
+        </events>
+    </frontend>
 </config>
         

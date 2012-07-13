@@ -11,7 +11,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
 
     function __construct()
     {
-        $this->_iterations = (int) Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
+        $this->_iterations = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
         $this->_hashAlgorithm = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
         $this->_keyLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
         $this->_saltLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/salt_length');
@@ -62,12 +62,20 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
         $hashArr = explode(':', $hash);
         switch (count($hashArr)) {
             case 1:
+                // Should support for non-Magento, simple hash passwords be phased out with this module?
                 return $this->hash($password) === $hash;
             case 2:
-                return $this->_pbkdf2($this->_hashAlgorithm, $password, $hashArr[1], $this->_iterations, $this->_keyLength) === $hashArr[0];
-            // TODO implement a method to encrypt all MD5 hashes with PBKDF2 and validate them too.
+                $result = $this->_pbkdf2($this->_hashAlgorithm, $password, $hashArr[1], $this->_iterations, $this->_keyLength) === $hashArr[0];
+                if (!$result && $this->_checkLegacy) {
+                    if ($result = parent::validateHash($password, $hash)) {
+                        // Update the customers password hash to pbkdf2
+                        // Further processing is done in the observer
+                        Mage::getSingleton('customer/session')->setUpdatePasswdHashFlag(true);
+                    }
+                }
+                return $result;
         }
-        Mage::throwException('Invalid hash.');
+        Mage::throwException('PBKDF2 ERROR: Invalid hash');
     }
 
     /*
@@ -87,7 +95,6 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
     */
     protected function _pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
     {
-        //Mage::log('hashed');
         $algorithm = strtolower($algorithm);
         if (!in_array($algorithm, hash_algos(), true))
             Mage::throwException('PBKDF2 ERROR: Invalid hash algorithm ' . $algorithm);
@@ -98,7 +105,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
         $block_count = ceil($key_length / $hash_length);
 
         // See Section 5.2 of the RFC 2898
-        if ($key_length > (pow(2,32) -1) * $hash_length) {
+        if ($key_length > (pow(2, 32) - 1) * $hash_length) {
             Mage::throwException('PBKDF2 ERROR: Invalid parameter: derived key too long.');
         }
 
