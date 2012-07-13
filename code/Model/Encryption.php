@@ -1,15 +1,53 @@
 <?php
 class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
 {
+    /**
+     * pbkdf2 iterations
+     * default 10000
+     *
+     * @var integer
+     */
+    protected $_iterations;
+    
+    /**
+     * pbkdf2 hash algorithm
+     * default sha512
+     *
+     * @var string
+     */
+    protected $_hashAlgorithm;
+    
+    /**
+     * pbkdf2 key length
+     * default 256
+     *
+     * @var integer
+     */
+    protected $_keyLengt;
+    
+    /**
+     * pbkdf2 salt length
+     * default 16, should be at least 8
+     *
+     * @var integer
+     */
+    protected $_saltLength;
+    
+    /**
+     * pbkdf2 legacy check to support old md5 hashes
+     * default false
+     *
+     * @var boolean
+     */
+    protected $_checkLegacy;
 
-    protected $_iterations = 10000;
-    protected $_hashAlgorithm = 'sha512';
-    protected $_keyLength = 256;
-    protected $_saltLength = 16;
-    protected $_checkLegacy = false;
 
-
-    function __construct()
+    /**
+     * overwrite default attributes with configuration settings
+     *
+     * @return void
+     */
+    public function __construct()
     {
         $this->_iterations = (int) Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
         $this->_hashAlgorithm = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
@@ -87,7 +125,6 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
     */
     protected function _pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
     {
-        //Mage::log('hashed');
         $algorithm = strtolower($algorithm);
         if (!in_array($algorithm, hash_algos(), true))
             Mage::throwException('PBKDF2 ERROR: Invalid hash algorithm ' . $algorithm);
