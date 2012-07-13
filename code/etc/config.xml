@@ -29,7 +29,7 @@
         <helpers>
             <core>
                 <!-- Overwrite the Core Encryption Model -->
-                <encryption_model>Ikonoshirt_Pbkdf2_Model_Encryption</encryption_model>
+                <encryption_model>Ikonoshirt_Pbkdf2_Model_Stub_CE</encryption_model>
             </core>
             <ikonoshirt_pbkdf2>
                 <class>Ikonoshirt_Pbkdf2_Helper</class>
@@ -52,15 +52,46 @@
             </pbkdf2_setup>
         </resources>
         <events>
+            <!-- replaces the customer passwords hashed the old way -->
             <customer_customer_authenticated>
+                <observers>
+                    <replace_md5_customer_passwords>
+                        <type>singleton</type>
+                        <class>ikonoshirt_pbkdf2/observer</class>
+                        <method>customer_customer_authenticated</method>
+                    </replace_md5_customer_passwords>
+                </observers>
+            </customer_customer_authenticated>
+            <!-- replaces the admin passwords hashed the old way -->
+            <admin_user_authenticate_after>
+                <observers>
+                    <replace_md5_admin_passwords>
+                        <type>singleton</type>
+                        <class>ikonoshirt_pbkdf2/observer</class>
+                        <method>admin_user_authenticate_after</method>
+                    </replace_md5_admin_passwords>
+                </observers>
+            </admin_user_authenticate_after>
+            <!-- replaces the api keys hashed the old way -->
+            <api_user_authenticated>
+                <observers>
+                    <replace_md5_api_passwords>
+                        <type>singleton</type>
+                        <class>ikonoshirt_pbkdf2/observer</class>
+                        <method>api_user_authenticated</method>
+                    </replace_md5_api_passwords>
+                </observers>
+            </api_user_authenticated>
+            <!-- check wether EE or CE is installed and change the config-node -->
+            <controller_action_predispatch>
                 <observers>
                     <addCustomOptionWhileEditing>
                         <type>singleton</type>
                         <class>ikonoshirt_pbkdf2/observer</class>
-                        <method>customer_customer_authenticated</method>
+                        <method>controller_action_predispatch</method>
                     </addCustomOptionWhileEditing>
                 </observers>
-            </customer_customer_authenticated>
+            </controller_action_predispatch>
         </events>
     </global>
 </config>

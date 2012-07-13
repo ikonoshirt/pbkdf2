@@ -1,5 +1,5 @@
 <?php
-class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
+class Ikonoshirt_Pbkdf2_Model_Encryption
 {
     /**
      * pbkdf2 iterations
@@ -41,14 +41,22 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
      */
     protected $_checkLegacy;
 
+    /**
+     * the stub which is used to replace the old encryption model
+     *
+     * @var Ikonoshirt_Pbkdf2_Model_Stub_Interface
+     */
+    protected $_encryptionStub;
 
     /**
      * overwrite default attributes with configuration settings
      *
-     * @return void
+     * @param array $arguments
+     * @return \Ikonoshirt_Pbkdf2_Model_Encryption
      */
-    public function __construct()
+    public function __construct(array $arguments)
     {
+        $this->_encryptionStub = $arguments[0];
         $this->_iterations = (int) Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
         $this->_hashAlgorithm = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
         $this->_keyLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
@@ -73,16 +81,15 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
     {
         if (false === $salt) {
             // if no salt was passed, use the old method
-            return $this->hash($plaintext);
+            return $this->_encryptionStub->hash($plaintext);
         }
 
         if (is_integer($salt)) {
             // check for minimum length
             if ($salt < $this->_saltLength) {
-                //Mage::log('Changed salt length from ' . $salt . ' to ' . $this->_saltLength . '.');
                 $salt = $this->_saltLength;
             }
-            $salt = $this->_helper->getRandomString($salt);
+            $salt = $this->_encryptionStub->getHelper()->getRandomString($salt);
         }
 
         return $this->_pbkdf2($this->_hashAlgorithm, $plaintext, $salt, $this->_iterations, $this->_keyLength) . ':' . $salt;
@@ -93,22 +100,22 @@ class Ikonoshirt_Pbkdf2_Model_Encryption extends Mage_Core_Model_Encryption
      *
      * @param string $password
      * @param string $hash
-     * @return void|boolean
-     * @throws Exception
+     * @return bool
+     * @throws Mage_Core_Exception
      */
     public function validateHash($password, $hash)
     {
-        if($this->_checkLegacy && strlen($hash) != $this->_keyLength) {
-            return parent::validateHash($password, $hash);
-        }
-
         $hashArr = explode(':', $hash);
         switch (count($hashArr)) {
             case 1:
                 return $this->hash($password) === $hash;
             case 2:
-                return $this->_pbkdf2($this->_hashAlgorithm, $password, $hashArr[1], $this->_iterations, $this->_keyLength) === $hashArr[0];
-            // TODO implement a method to encrypt all MD5 hashes with PBKDF2 and validate them too.
+                if($this->_pbkdf2($this->_hashAlgorithm, $password, $hashArr[1], $this->_iterations, $this->_keyLength)
+                    === $hashArr[0]) {
+                    return true;
+                }
+                // if the password is not pbkdf2 hashed, and the owner wants it, try the old hashing algorithm
+                return $this->_checkLegacy && $this->_encryptionStub->validateLegacyHash($password, $hash);
         }
         Mage::throwException('Invalid hash.');
     }

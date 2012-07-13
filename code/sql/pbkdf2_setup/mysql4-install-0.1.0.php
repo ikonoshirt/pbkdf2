@@ -31,6 +31,4 @@ if ('text' !== $currentAttribute->getBackendType()) {
     $installer->getConnection()->delete($currentTable, array('attribute_id=?' => $currentAttribute->getId()));
 }
 
-// TODO encrypt the hashes with PBKDF2
-
 $installer->endSetup();
