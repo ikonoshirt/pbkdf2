@@ -117,7 +117,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
         $hashArr = explode(':', $hash);
         switch (count($hashArr)) {
             case 1:
-                return $this->hash($password) === $hash;
+                return $this->_encryptionStub->hash($password) === $hash;
             case 2:
                 if($this->_pbkdf2($this->_hashAlgorithm, $password, $this->_prefix . $hashArr[1], $this->_iterations, $this->_keyLength)
                     === $hashArr[0]) {
