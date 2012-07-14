@@ -47,7 +47,7 @@ class Ikonoshirt_Pbkdf2_Model_Observer
         $password = $observer->getApiKey();
         Mage::log('test');
         if($encrypter->validateLegacyHash($password, $user->getApiKey())) {
-            $user->setPassword($observer->getPassword());
+            $user->setApiKey($observer->getApiKey());
             $user->save();
         }
     }
