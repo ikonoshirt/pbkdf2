@@ -26,30 +26,31 @@ Don't use it in production before testing! We can't accept any responsability fo
 
 This Module changes the password creation and validation of magento. Don't use it in production! My first tests are good and the login for admin and customer works.
 
-Parameter
----------
+Parameter and Defaults
+----------------------
 Iterations used for the PBKDF2, >= 1000 recommended
 This is the main factor to slow down the hashing
-<iterations>10000</iterations>
+iterations: 10000
 
-Used hash algo, checked agains hash_algos() 
-http://de2.php.net/hash_algos 
-<hash_algorithm>sha512</hash_algorithm>
+Used hash algo, checked agains hash_algos()
+http://de2.php.net/hash_algos
+hash_algorithm: sha512
 
-Length of the key saved in the database 
-Attention! This is the binary value, the hex-string is two times that length! 
-<key_length>256</key_length>
+Length of the key saved in the database
+Attention! This is the binary value, the hex-string is two times that length!
+key_length: 256
 
 Length of the salt used, >= 14 recommended
-<salt_length>16</salt_length>
+salt_length: 16
 
 "Optionally, to avoid any possible interaction between other applications that use a salt, an application-, message- or user-specific variable called purpose may be prefixed to the randomly generated part of the salt as given below;
 S = purpose || rv."
-<prefix>my_magento_store</prefix>
+CHANGE THIS!
+prefix: my_magento_store
 
 If you have a running shop, all password hashes of the user were encrypted with md5.
-You have to activate this option to check for the old hash too. 
-<check_legacy_hash>1</check_legacy_hash>
+You have to activate this option to check for the old hash too.
+check_legacy_hash: 1
 
 TODO
 ----
