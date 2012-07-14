@@ -55,5 +55,4 @@ check_legacy_hash: 1
 TODO
 ----
 - Write test suite to test the useability
-- Test against EE
 - Add a admin-formular to change all passwords to new ones and send mails with new passwords
