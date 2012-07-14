@@ -28,9 +28,12 @@ class Ikonoshirt_Pbkdf2_Model_Observer
         }
     }
 
+    /**
+     * If the api password is hashed the old way, we replace it
+     *
+     * @param $observer
+     */
     public function api_user_authenticated($observer) {
-        // TODO implement and test ... only a few ideas, but I don't know the API and the apiKey storage enough
-        // looks like the keys is maybe not hashed?!
         if(!(boolean)Mage::getStoreConfig('ikonoshirt/pbkdf2/check_legacy_hash')) {
             return;
         }
@@ -39,11 +42,13 @@ class Ikonoshirt_Pbkdf2_Model_Observer
         $helper = Mage::helper('core');
         $encrypter = $helper->getEncryptor();
 
-        /* @var $user Mage_Admin_Model_User */
+        /* @var $user Mage_Api_Model_User */
         $user = $observer->getModel();
         $password = $observer->getApiKey();
-        if($encrypter->validateLegacyHash($password, $user->getPassword())) {
+        Mage::log('test');
+        if($encrypter->validateLegacyHash($password, $user->getApiKey())) {
             $user->setPassword($observer->getPassword());
+            $user->save();
         }
     }
 
