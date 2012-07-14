@@ -5,7 +5,7 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->getConnection()->modifyColumn(
-    $installer->getTable('admin/user'), 'password', 'VARCHAR(800) default NULL'
+    $installer->getTable('admin/user'), 'password', 'TEXT default NULL'
 );
 
 $newAttribute = Mage::getSingleton('eav/config')->getAttribute('customer', 'password_hash');
