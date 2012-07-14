@@ -42,6 +42,12 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
     protected $_checkLegacy;
 
     /**
+     * Prefix to avoid having the same salt in different applications/shops you can define a prefix
+     *
+     * @var string
+     */
+    protected $_prefix;
+    /**
      * the stub which is used to replace the old encryption model
      *
      * @var Ikonoshirt_Pbkdf2_Model_Stub_Interface
@@ -61,6 +67,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
         $this->_hashAlgorithm = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
         $this->_keyLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
         $this->_saltLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/salt_length');
+        $this->_prefix = (string)Mage::getStoreConfig('ikonoshirt/pbkdf2/prefix');
         $this->_checkLegacy = (boolean)Mage::getStoreConfig('ikonoshirt/pbkdf2/check_legacy_hash');
     }
 
@@ -89,10 +96,12 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
             if ($salt < $this->_saltLength) {
                 $salt = $this->_saltLength;
             }
-            $salt = $this->_encryptionStub->getHelper()->getRandomString($salt);
+            $randomPartOfSalt = $this->_encryptionStub->getHelper()->getRandomString($salt);
+            $salt = $this->_prefix . $randomPartOfSalt;
+
         }
 
-        return $this->_pbkdf2($this->_hashAlgorithm, $plaintext, $salt, $this->_iterations, $this->_keyLength) . ':' . $salt;
+        return $this->_pbkdf2($this->_hashAlgorithm, $plaintext, $salt, $this->_iterations, $this->_keyLength) . ':' . $randomPartOfSalt;
     }
 
     /**
@@ -110,7 +119,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
             case 1:
                 return $this->hash($password) === $hash;
             case 2:
-                if($this->_pbkdf2($this->_hashAlgorithm, $password, $hashArr[1], $this->_iterations, $this->_keyLength)
+                if($this->_pbkdf2($this->_hashAlgorithm, $password, $this->_prefix . $hashArr[1], $this->_iterations, $this->_keyLength)
                     === $hashArr[0]) {
                     return true;
                 }

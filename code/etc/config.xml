@@ -19,7 +19,9 @@
                 <key_length>256</key_length>
                 <!-- Length of the salt used, >= 8 recommended -->
                 <salt_length>16</salt_length>
-                <!-- If you have a running shop, all password hashes of the user were encrypted with PBKDF2. -->
+                <!-- to avoid having the same salt in different applications/shops you can define a prefix -->
+                <prefix>prefix</prefix>
+                <!-- If you have a running shop, all password hashes of the user were encrypted with md5. -->
                 <!-- You have to activate this option to check for the old hash too. -->
                 <check_legacy_hash>1</check_legacy_hash>
             </pbkdf2>
