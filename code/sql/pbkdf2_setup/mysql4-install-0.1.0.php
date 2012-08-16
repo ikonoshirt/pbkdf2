@@ -8,7 +8,8 @@ $installer->getConnection()->modifyColumn(
     $installer->getTable('admin/user'), 'password', 'TEXT default NULL'
 );
 
-$newAttribute = Mage::getSingleton('eav/config')->getAttribute('customer', 'password_hash');
+$newAttribute = Mage::getSingleton('eav/config')
+    ->getAttribute('customer', 'password_hash');
 $currentAttribute = clone $newAttribute;
 if ('text' !== $currentAttribute->getBackendType()) {
     $newAttribute = clone $currentAttribute;
@@ -20,15 +21,19 @@ if ('text' !== $currentAttribute->getBackendType()) {
     // Copy password hashes over to the text attribute value table
     $cols = array('entity_type_id', 'attribute_id', 'entity_id', 'value');
     $sql = $installer->getConnection()->select()
-            ->from($currentTable, $cols)
-            ->where('attribute_id=?', $currentAttribute->getId())
-            ->insertFromSelect($newTable, $cols);
+        ->from($currentTable, $cols)
+        ->where('attribute_id=?', $currentAttribute->getId())
+        ->insertFromSelect($newTable, $cols);
     $installer->getConnection()->query($sql);
 
-    $installer->updateAttribute('customer', 'password_hash', 'backend_type', 'text');
+    $installer->updateAttribute(
+        'customer', 'password_hash', 'backend_type', 'text'
+    );
 
     // Delete values from old value table
-    $installer->getConnection()->delete($currentTable, array('attribute_id=?' => $currentAttribute->getId()));
+    $installer->getConnection()->delete(
+        $currentTable, array('attribute_id=?' => $currentAttribute->getId())
+    );
 }
 
 $installer->endSetup();

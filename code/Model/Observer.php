@@ -28,13 +28,16 @@ class Ikonoshirt_Pbkdf2_Model_Observer
      * If the customer's password is an old MD5 hash, and the shop-owner
      * wants them to replaced, DO IT.
      *
-     * @param Mage_Core_Model_Observer $observer Observer with customer informations
+     * @param Mage_Core_Model_Observer $observer Observer with
+     *                                            customer informations
      *
      * @return void
      */
     public function customerCustomerAuthenticated($observer)
     {
-        if (!(boolean)Mage::getStoreConfig('ikonoshirt/pbkdf2/check_legacy_hash')) {
+        if (!(boolean)Mage::getStoreConfig(
+            'ikonoshirt/pbkdf2/check_legacy_hash'
+        )) {
             return;
         }
 
@@ -48,7 +51,8 @@ class Ikonoshirt_Pbkdf2_Model_Observer
         /* @var $encrypter Ikonoshirt_Pbkdf2_Model_Stub_Interface */
         $encrypter = $helper->getEncryptor();
 
-        // if the hash validates against the old hashing method, replace the hash
+        // if the hash validates against the old hashing method,
+        //   replace the hash
         if ($encrypter->validateLegacyHash(
             $password, $customer->getPasswordHash()
         )
@@ -61,13 +65,16 @@ class Ikonoshirt_Pbkdf2_Model_Observer
     /**
      * If the api password is hashed the old way, we replace it
      *
-     * @param Mage_Core_Model_Observer $observer Observer with API user informations
+     * @param Mage_Core_Model_Observer $observer Observer with API
+     *              user informations
      *
      * @return void
      */
     public function apiUserAuthenticated($observer)
     {
-        if (!(boolean)Mage::getStoreConfig('ikonoshirt/pbkdf2/check_legacy_hash')) {
+        if (!(boolean)Mage::getStoreConfig(
+            'ikonoshirt/pbkdf2/check_legacy_hash'
+        )) {
             return;
         }
 
@@ -109,10 +116,10 @@ class Ikonoshirt_Pbkdf2_Model_Observer
     }
 
     /**
-     * If the magento version is Enterprise Edition we have to change the Stub we
-     * extend from
+     * If the magento version is Enterprise Edition we have to change the Stub
+     * we extend from
      *
-     * @param Mage_Core_Model_Observer $observer Observer with event informations
+     * @param Mage_Core_Model_Observer $observer Observer with event information
      *
      * @return void
      */
@@ -121,13 +128,15 @@ class Ikonoshirt_Pbkdf2_Model_Observer
         $isStoreCollection = $observer->getCollection() instanceof
         Mage_Core_Model_Resource_Store_Collection;
         if (!$isStoreCollection) {
-            // we only want to hook up the first call of this event. The first call
-            // is for the store collection
+            // we only want to hook up the first call of this event.
+            // The first call is for the store collection
             return;
         }
         // Mage_Core_Model_Resource_Store_Collection
 
-        if ((string)Mage::getConfig()->getNode('modules/Enterprise_Pci/active')) {
+        if ((string)Mage::getConfig()->getNode(
+            'modules/Enterprise_Pci/active'
+        )) {
             Mage::getConfig()->setNode(
                 'global/helpers/core/encryption_model',
                 'Ikonoshirt_Pbkdf2_Model_Stub_EE'

@@ -1,4 +1,27 @@
 <?php
+/**
+ * In this file you find the encryption class
+ *
+ * PHP Version 5.2.13
+ *
+ * @category Magento
+ * @package  Ikonoshirt_Pbkdf2
+ * @author   Fabian Blechschmidt <fabian.blechschmidt@ikonoshirt.de>
+ * @license  http://www.ikonoshirt.de/stuff/licenses/beerware-fabian.txt THE BEER-WARE LICENSE
+ * @version  GIT: <git_id>
+ * @link     https://github.com/ikonoshirt/pbkdf2
+ * @php
+ */
+
+/**
+ * Encryption class
+ *
+ * @category Magento
+ * @package  Ikonoshirt_Pbkdf2
+ * @author   Fabian Blechschmidt <fabian.blechschmidt@ikonoshirt.de>
+ * @license  http://www.ikonoshirt.de/stuff/licenses/beerware-fabian.txt THE BEER-WARE LICENSE
+ * @link     https://github.com/ikonoshirt/pbkdf2
+ */
 class Ikonoshirt_Pbkdf2_Model_Encryption
 {
     /**
@@ -42,7 +65,8 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
     protected $_checkLegacy;
 
     /**
-     * Prefix to avoid having the same salt in different applications/shops you can define a prefix
+     * Prefix to avoid having the same salt in different
+     * applications/shops you can define a prefix
      *
      * @var string
      */
@@ -58,17 +82,26 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
      * overwrite default attributes with configuration settings
      *
      * @param array $arguments
+     *
      * @return \Ikonoshirt_Pbkdf2_Model_Encryption
      */
     public function __construct(array $arguments)
     {
         $this->_encryptionStub = $arguments[0];
-        $this->_iterations = (int) Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
-        $this->_hashAlgorithm = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
-        $this->_keyLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
-        $this->_saltLength = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/salt_length');
-        $this->_prefix = (string)Mage::getStoreConfig('ikonoshirt/pbkdf2/prefix');
-        $this->_checkLegacy = (boolean)Mage::getStoreConfig('ikonoshirt/pbkdf2/check_legacy_hash');
+        $this->_iterations
+            = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
+        $this->_hashAlgorithm
+            = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
+        $this->_keyLength
+            = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
+        $this->_saltLength
+            = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/salt_length');
+        $this->_prefix
+            = (string)Mage::getStoreConfig('ikonoshirt/pbkdf2/prefix');
+        $this->_checkLegacy
+            = (boolean)Mage::getStoreConfig(
+                'ikonoshirt/pbkdf2/check_legacy_hash'
+            );
     }
 
 
@@ -81,7 +114,8 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
      * string - use the given salt for _pbkdf2
      *
      * @param string $plaintext
-     * @param mixed $salt
+     * @param mixed  $salt
+     *
      * @return string
      */
     public function getHash($plaintext, $salt = false)
@@ -96,12 +130,16 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
             if ($salt < $this->_saltLength) {
                 $salt = $this->_saltLength;
             }
-            $randomPartOfSalt = $this->_encryptionStub->getHelper()->getRandomString($salt);
+            $randomPartOfSalt
+                = $this->_encryptionStub->getHelper()->getRandomString($salt);
             $salt = $this->_prefix . $randomPartOfSalt;
 
         }
 
-        return $this->_pbkdf2($this->_hashAlgorithm, $plaintext, $salt, $this->_iterations, $this->_keyLength) . ':' . $randomPartOfSalt;
+        return $this->_pbkdf2(
+            $this->_hashAlgorithm, $plaintext, $salt, $this->_iterations,
+            $this->_keyLength
+        ) . ':' . $randomPartOfSalt;
     }
 
     /**
@@ -109,6 +147,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
      *
      * @param string $password
      * @param string $hash
+     *
      * @return bool
      * @throws Mage_Core_Exception
      */
@@ -117,66 +156,90 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
         $hashArr = explode(':', $hash);
         switch (count($hashArr)) {
             case 1:
-                return $this->_encryptionStub->hash($password) === $hash;
+            return $this->_encryptionStub->hash($password) === $hash;
             case 2:
-                if($this->_pbkdf2($this->_hashAlgorithm, $password, $this->_prefix . $hashArr[1], $this->_iterations, $this->_keyLength)
-                    === $hashArr[0]) {
+                if ($this->_pbkdf2(
+                    $this->_hashAlgorithm, $password,
+                    $this->_prefix . $hashArr[1], $this->_iterations,
+                    $this->_keyLength
+                ) === $hashArr[0]
+                ) {
                     return true;
                 }
-                // if the password is not pbkdf2 hashed, and the owner wants it, try the old hashing algorithm
-                return $this->_checkLegacy && $this->_encryptionStub->validateLegacyHash($password, $hash);
+            return
+                $this->_checkLegacy
+                && $this->_encryptionStub->validateLegacyHash(
+                    $password, $hash
+                );
         }
         Mage::throwException('Invalid hash.');
     }
 
-    /*
-    * PBKDF2 key derivation function as defined by RSA's PKCS #5: https://www.ietf.org/rfc/rfc2898.txt
-    * $algorithm - The hash algorithm to use. Recommended: SHA256
-    * $password - The password.
-    * $salt - A salt that is unique to the password.
-    * $count - Iteration count. Higher is better, but slower. Recommended: At least 1024.
-    * $key_length - The length of the derived key in bytes.
-    * $raw_output - If true, the key is returned in raw binary format. Hex encoded otherwise.
-    * Returns: A $key_length-byte key derived from the password and salt.
-    *
-    * Test vectors can be found here: https://www.ietf.org/rfc/rfc6070.txt
-    *
-    * This implementation of PBKDF2 was originally created by defuse.ca
-    * With improvements by variations-of-shadow.com
-    */
-    protected function _pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
+    /**
+     * PBKDF2 key derivation function as defined by RSA's PKCS #5:
+     * https://www.ietf.org/rfc/rfc2898.txt
+     *
+     * Test vectors can be found here: https://www.ietf.org/rfc/rfc6070.txt
+     *
+     * This implementation of PBKDF2 was originally created by defuse.ca
+     * With improvements by variations-of-shadow.com
+     *
+     * @var string $algorithm - The hash algorithm to use. Recommended: SHA256
+     * @var string $password  - The password.
+     * @var string $salt      - A salt that is unique to the password.
+     * @var int    $count     - Iteration count. Higher is better, but slower.
+     *                          Recommended: At least 1024.
+     * @var        $keyLength - The length of the derived key in bytes.
+     * @var        $rawOutput - If true, the key is returned in raw binary
+     *                          format. Hex encoded otherwise.
+     *
+     *
+     * @return string $keyLength-byte key derived from the password and salt.
+     */
+    protected function _pbkdf2(
+        $algorithm, $password, $salt, $count,
+        $keyLength, $rawOutput = false
+    )
     {
         $algorithm = strtolower($algorithm);
-        if (!in_array($algorithm, hash_algos(), true))
-            Mage::throwException('PBKDF2 ERROR: Invalid hash algorithm ' . $algorithm);
-        if ($count <= 0 || $key_length <= 0)
+        if (!in_array($algorithm, hash_algos(), true)) {
+            Mage::throwException(
+                'PBKDF2 ERROR: Invalid hash algorithm ' . $algorithm
+            );
+        }
+        if ($count <= 0 || $keyLength <= 0) {
             Mage::throwException('PBKDF2 ERROR: Invalid parameters.');
+        }
 
-        $hash_length = strlen(hash($algorithm, "", true));
-        $block_count = ceil($key_length / $hash_length);
+        $hashLength = strlen(hash($algorithm, "", true));
+        $blockCount = ceil($keyLength / $hashLength);
 
         // See Section 5.2 of the RFC 2898
-        if ($key_length > (pow(2,32) -1) * $hash_length) {
-            Mage::throwException('PBKDF2 ERROR: Invalid parameter: derived key too long.');
+        if ($keyLength > (pow(2, 32) - 1) * $hashLength) {
+            Mage::throwException(
+                'PBKDF2 ERROR: Invalid parameter: derived key too long.'
+            );
         }
 
         $output = "";
-        for ($i = 1; $i <= $block_count; $i++) {
+        for ($i = 1; $i <= $blockCount; $i++) {
             // $i encoded as 4 bytes, big endian.
             $last = $salt . pack("N", $i);
             // first iteration
             $last = $xorsum = hash_hmac($algorithm, $last, $password, true);
             // perform the other $count - 1 iterations
             for ($j = 1; $j < $count; $j++) {
-                $xorsum ^= ($last = hash_hmac($algorithm, $last, $password, true));
+                $xorsum
+                    ^= ($last = hash_hmac($algorithm, $last, $password, true));
             }
             $output .= $xorsum;
         }
 
-        if ($raw_output)
-            return substr($output, 0, $key_length);
-        else
-            return bin2hex(substr($output, 0, $key_length));
+        if ($rawOutput) {
+            return substr($output, 0, $keyLength);
+        } else {
+            return bin2hex(substr($output, 0, $keyLength));
+        }
     }
 
 }
