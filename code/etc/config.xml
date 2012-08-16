@@ -60,7 +60,7 @@
                     <replace_md5_customer_passwords>
                         <type>singleton</type>
                         <class>ikonoshirt_pbkdf2/observer</class>
-                        <method>customer_customer_authenticated</method>
+                        <method>customerCustomerAuthenticated</method>
                     </replace_md5_customer_passwords>
                 </observers>
             </customer_customer_authenticated>
@@ -70,7 +70,7 @@
                     <replace_md5_admin_passwords>
                         <type>singleton</type>
                         <class>ikonoshirt_pbkdf2/observer</class>
-                        <method>admin_user_authenticate_after</method>
+                        <method>adminUserAuthenticateAfter</method>
                     </replace_md5_admin_passwords>
                 </observers>
             </admin_user_authenticate_after>
@@ -80,21 +80,28 @@
                     <replace_md5_api_passwords>
                         <type>singleton</type>
                         <class>ikonoshirt_pbkdf2/observer</class>
-                        <method>api_user_authenticated</method>
+                        <method>apiUserAuthenticated</method>
                     </replace_md5_api_passwords>
                 </observers>
             </api_user_authenticated>
             <!-- check wether EE or CE is installed and change the config-node -->
-            <controller_action_predispatch>
+            <core_collection_abstract_load_before>
                 <observers>
                     <addCustomOptionWhileEditing>
                         <type>singleton</type>
                         <class>ikonoshirt_pbkdf2/observer</class>
-                        <method>controller_action_predispatch</method>
+                        <method>coreCollectionAbstractLoadBefore</method>
                     </addCustomOptionWhileEditing>
                 </observers>
-            </controller_action_predispatch>
+            </core_collection_abstract_load_before>
         </events>
     </global>
+    <phpunit>
+        <suite>
+            <modules>
+                <Ikonoshirt_Pbkdf2/>
+            </modules>
+        </suite>
+    </phpunit>
 </config>
         
