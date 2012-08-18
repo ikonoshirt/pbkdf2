@@ -46,7 +46,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
      *
      * @var integer
      */
-    protected $_keyLengt;
+    protected $_keyLength;
 
     /**
      * pbkdf2 salt length
@@ -130,16 +130,16 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
             if ($salt < $this->_saltLength) {
                 $salt = $this->_saltLength;
             }
-            $randomPartOfSalt
+            $randomStringForSalt
                 = $this->_encryptionStub->getHelper()->getRandomString($salt);
-            $salt = $this->_prefix . $randomPartOfSalt;
+            $salt = $this->_prefix . $randomStringForSalt;
 
         }
 
         return $this->_pbkdf2(
             $this->_hashAlgorithm, $plaintext, $salt, $this->_iterations,
             $this->_keyLength
-        ) . ':' . $randomPartOfSalt;
+        ) . ':' . $salt;
     }
 
     /**
