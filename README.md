@@ -21,6 +21,8 @@ Thanks to vinai for the chats about implementation and the practical help AND fo
 
 Thanks to  Ivan Chepurnyi and the EcomDev team for writing EcomDev_PHPUnit: https://github.com/IvanChepurnyi/EcomDev_PHPUnit
 
+Thanks to Anthony Ferrara who built PHP-CryptLib and provides test vectors for pbkdf2 and sha512 (https://github.com/ircmaxell/PHP-CryptLib)
+
 ##Attention!
 Don't use it in production before testing! We can't accept any responsability for this code at the moment.
 
