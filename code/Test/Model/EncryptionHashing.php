@@ -1,6 +1,6 @@
 <?php
 
-class Ikonoshirt_Pbkdf2_Test_Model_Encryption extends EcomDev_PHPUnit_Test_Case
+class Ikonoshirt_Pbkdf2_Test_Model_EncryptionHashing extends EcomDev_PHPUnit_Test_Case
 {
     protected $_iterationReflection;
     protected $_keyLengthReflection;

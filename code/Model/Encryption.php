@@ -160,7 +160,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
             case 2:
                 if ($this->_pbkdf2(
                     $this->_hashAlgorithm, $password,
-                    $this->_prefix . $hashArr[1], $this->_iterations,
+                    $hashArr[1], $this->_iterations,
                     $this->_keyLength
                 ) === $hashArr[0]
                 ) {

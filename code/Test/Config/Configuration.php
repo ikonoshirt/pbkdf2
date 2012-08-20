@@ -8,7 +8,7 @@ class Ikonoshirt_Pbkdf2_Test_Config_Configuration
      *
      * @test
      */
-    public function checkStandardConfigurationValues()
+    public function checkStandardConfigurationValuesForPbkdf2()
     {
         $this->assertConfigNodeHasChildren('default/ikonoshirt/pbkdf2');
 
@@ -29,6 +29,25 @@ class Ikonoshirt_Pbkdf2_Test_Config_Configuration
         );
         $this->assertConfigNodeContainsValue(
             'default/ikonoshirt/pbkdf2/check_legacy_hash', 1
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function checkModelConfiguration()
+    {
+        $this->assertModelAlias(
+            'ikonoshirt_pbkdf2/encryption',
+            'Ikonoshirt_Pbkdf2_Model_Encryption'
+        );
+    }
+
+    public function checkEncryptionClassOverwrite()
+    {
+        $this->assertConfigNodeContainsValue(
+            'global/helpers/core/encryption_model',
+            'Ikonoshirt_Pbkdf2_Model_Stub_CE'
         );
     }
 }

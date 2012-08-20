@@ -103,6 +103,7 @@ class Ikonoshirt_Pbkdf2_Model_Observer
      */
     public function adminUserAuthenticateAfter($observer)
     {
+
         /* @var $helper Mage_Core_Helper_Data */
         $helper = Mage::helper('core');
         $encrypter = $helper->getEncryptor();
@@ -112,6 +113,7 @@ class Ikonoshirt_Pbkdf2_Model_Observer
         $password = $observer->getPassword();
         if ($encrypter->validateLegacyHash($password, $user->getPassword())) {
             $user->setPassword($observer->getPassword());
+            $user->save();
         }
     }
 
