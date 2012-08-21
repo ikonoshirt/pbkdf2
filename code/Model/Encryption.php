@@ -89,19 +89,19 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
     {
         $this->_encryptionStub = $arguments[0];
         $this->_iterations
-            = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
+        = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/iterations');
         $this->_hashAlgorithm
-            = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
+        = Mage::getStoreConfig('ikonoshirt/pbkdf2/hash_algorithm');
         $this->_keyLength
-            = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
+        = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/key_length');
         $this->_saltLength
-            = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/salt_length');
+        = (int)Mage::getStoreConfig('ikonoshirt/pbkdf2/salt_length');
         $this->_prefix
-            = (string)Mage::getStoreConfig('ikonoshirt/pbkdf2/prefix');
+        = (string)Mage::getStoreConfig('ikonoshirt/pbkdf2/prefix');
         $this->_checkLegacy
-            = (boolean)Mage::getStoreConfig(
-                'ikonoshirt/pbkdf2/check_legacy_hash'
-            );
+        = (boolean)Mage::getStoreConfig(
+            'ikonoshirt/pbkdf2/check_legacy_hash'
+        );
     }
 
 
@@ -131,15 +131,18 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
                 $salt = $this->_saltLength;
             }
             $randomStringForSalt
-                = $this->_encryptionStub->getHelper()->getRandomString($salt);
+            = $this->_encryptionStub->getHelper()->getRandomString($salt);
             $salt = $this->_prefix . $randomStringForSalt;
 
         }
 
         return $this->_pbkdf2(
-            $this->_hashAlgorithm, $plaintext, $salt, $this->_iterations,
+            $this->_hashAlgorithm,
+            $plaintext,
+            $this->_prefix . $salt,
+            $this->_iterations,
             $this->_keyLength
-        ) . ':' . $salt;
+        ) . ':' . $this->_prefix . $salt;
     }
 
     /**
@@ -230,7 +233,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
             // perform the other $count - 1 iterations
             for ($j = 1; $j < $count; $j++) {
                 $xorsum
-                    ^= ($last = hash_hmac($algorithm, $last, $password, true));
+                ^= ($last = hash_hmac($algorithm, $last, $password, true));
             }
             $output .= $xorsum;
         }
