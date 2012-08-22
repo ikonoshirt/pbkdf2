@@ -90,13 +90,14 @@ class Ikonoshirt_Pbkdf2_Test_Model_EncryptionHashing extends EcomDev_PHPUnit_Tes
                 'password',
                 'salt'
             ),
-            array(
-                'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984',
-                16777216,
-                20,
-                'password',
-                'salt'
-            ),
+            /* hashing 16777216 really needs time :-) */
+//            array(
+//                'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984',
+//                16777216,
+//                20,
+//                'password',
+//                'salt'
+//            ),
             array(
                 '3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038',
                 4096,

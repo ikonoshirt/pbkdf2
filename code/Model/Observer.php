@@ -136,6 +136,8 @@ class Ikonoshirt_Pbkdf2_Model_Observer
         }
         // Mage_Core_Model_Resource_Store_Collection
 
+        // only replace if the version is EE and has a
+        // Enterprice_Pci module installed
         if ((string)Mage::getConfig()->getNode(
             'modules/Enterprise_Pci/active'
         )) {
