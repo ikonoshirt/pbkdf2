@@ -13,6 +13,11 @@ We have overwritten no classes.
 
 We changed the encryption model in global/helpers/core/encryption_model and use a few events to replaces the passwords after login. This is configurable, have a look at the settings.
 
+## Fully(?) tested
+I tested everything I thought it is a good idea. If you find a bug, open an issue, send a pull request, write a test, it's up to you.
+
+For found bugs, I use TDD, so first write a test which fails and is ok after the fix.
+
 ##Thanks
 
 Thanks to thebod for talking all the time about security and teaching a sense for it.
@@ -54,5 +59,4 @@ You have to activate this option to check for the old hash too.
 check_legacy_hash: 1
 
 ##TODO
-- Write test suite to test the useability
 - Add a admin-formular to change all passwords to new ones and send mails with new passwords
