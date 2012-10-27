@@ -5,7 +5,7 @@ This module changes by default all passwords of the user AFTER THEIR login to th
 
 It is important to understand, that the password is replaced AFTER login. It means, after you installed the module, the old, weak password hashes are still in the database!
 
-This module should be compatible to Magento EE - but at the moment nobody tested it.
+This module should be compatible to Magento EE - the tests run on mage-lite (certification version)
 
 ##For Developers
 
