@@ -1,7 +1,6 @@
 <?php
 /**
  * In this file you find all the observer methods used in the pbkdf2 module
- *
  * PHP Version 5.2.13
  *
  * @category Magento

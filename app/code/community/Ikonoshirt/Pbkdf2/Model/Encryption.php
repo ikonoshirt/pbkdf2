@@ -139,10 +139,10 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
         return $this->_pbkdf2(
             $this->_hashAlgorithm,
             $plaintext,
-            $this->_prefix . $salt,
+            $salt,
             $this->_iterations,
             $this->_keyLength
-        ) . ':' . $this->_prefix . $salt;
+        ) . ':' .$salt;
     }
 
     /**
