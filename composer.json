@@ -1,0 +1,9 @@
+{
+  "name": "ikonoshirt/pbkdf2",
+  "licence": "BSD-3-Clause",
+  "type": "magento-module",
+  "description": "Implements PBKDF2 as replacement for the standard magento password hashing",
+  "suggest": {
+    "magento-hackathon/magento-composer-installer": "*"
+  } 
+}
