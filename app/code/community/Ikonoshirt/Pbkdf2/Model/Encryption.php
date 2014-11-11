@@ -130,8 +130,7 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
             if ($salt < $this->_saltLength) {
                 $salt = $this->_saltLength;
             }
-            $randomStringForSalt
-            = $this->_encryptionStub->getHelper()->getRandomString($salt);
+            $randomStringForSalt = $this->_getRandomString($salt);
             $salt = $this->_prefix . $randomStringForSalt;
 
         }
@@ -245,4 +244,46 @@ class Ikonoshirt_Pbkdf2_Model_Encryption
         }
     }
 
+    /**
+     * Get random string (ported from Magento 2 with monitor changes)
+     *
+     * @param int         $length
+     * @param null|string $chars
+     * @return string
+     */
+    protected function _getRandomString($length, $chars = null)
+    {
+        $str = '';
+        if (null === $chars) {
+            $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        }
+
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            // use openssl lib if it is installed
+            for ($i = 0, $lc = strlen($chars) - 1; $i < $length; $i++) {
+                $bytes = openssl_random_pseudo_bytes(PHP_INT_SIZE);
+                $hex = bin2hex($bytes); // hex() doubles the length of the string
+                $rand = abs(hexdec($hex) % $lc); // random integer from 0 to $lc
+                $str .= $chars[$rand]; // random character in $chars
+            }
+        } elseif ($fp = @fopen('/dev/urandom', 'rb')) {
+            // attempt to use /dev/urandom if it exists but openssl isn't available
+            for ($i = 0, $lc = strlen($chars) - 1; $i < $length; $i++) {
+                $bytes = @fread($fp, PHP_INT_SIZE);
+                $hex = bin2hex($bytes); // hex() doubles the length of the string
+                $rand = abs(hexdec($hex) % $lc); // random integer from 0 to $lc
+                $str .= $chars[$rand]; // random character in $chars
+            }
+            fclose($fp);
+        } else {
+            // fallback to mt_rand() if all else fails
+            mt_srand();
+            for ($i = 0, $lc = strlen($chars) - 1; $i < $length; $i++) {
+                $rand = mt_rand(0, $lc); // random integer from 0 to $lc
+                $str .= $chars[$rand]; // random character in $chars
+            }
+        }
+
+        return $str;
+    }
 }
