@@ -1,13 +1,16 @@
 <?php
 
-class Ikonoshirt_Pbkdf2_Test_Model_Observer extends EcomDev_PHPUnit_Test_Case
+class Ikonoshirt_Pbkdf2_Test_Model_Observer extends EcomDev_PHPUnit_Test_Case_Controller
 {
-
     /**
      * @test
+     * @singleton admin/session
      */
     public function testAdminPasswordReplaced()
     {
+        //Mock session model to prevent session_start()
+        $this->replaceByMock('singleton', 'admin/session',
+            $this->getModelMock('admin/session', array(), false, array(), '', false));
         //Reflection to set old password
         $dataReflection = new ReflectionProperty(
             'Mage_Admin_Model_User', '_data'
@@ -202,11 +205,13 @@ class Ikonoshirt_Pbkdf2_Test_Model_Observer extends EcomDev_PHPUnit_Test_Case
 
     /**
      *
-     *
      * @test
+     * @registry isSecureArea
      */
     public function testCustomerPasswordReplaced()
     {
+        //Allow deleting customer model without adminhtml context
+        Mage::register('isSecureArea', true);
         // TODO remove static 1 for store id
         $store = Mage::getModel('core/store')->load(1);
         /* @var $store Mage_Core_Model_Store */
@@ -215,6 +220,13 @@ class Ikonoshirt_Pbkdf2_Test_Model_Observer extends EcomDev_PHPUnit_Test_Case
         $enc->setHelper(Mage::helper('core'));
         /* @var $enc Mage_Core_Model_Encryption */
         $hash = $enc->getHash('password', 2);
+
+        // delete account if existing
+        $customer = Mage::getModel('customer/customer');
+        $customer->setStore($store)->loadByEmail('mail@example.invalid');
+        if (!$customer->isObjectNew()) {
+            $customer->delete();
+        }
 
         $customer = Mage::getModel('customer/customer');
         /* @var $customer Mage_Customer_Model_Customer */
