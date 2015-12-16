@@ -35,6 +35,8 @@ class Ikonoshirt_Pbkdf2_Model_Stub_EE extends Enterprise_Pci_Model_Encryption
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->_realHashModel = Mage::getModel(
             'ikonoshirt_pbkdf2/encryption', array($this)
         );
