@@ -13,6 +13,8 @@ This module should be compatible to Magento EE - the tests run on mage-lite (cer
 *CHANGE THIS!*
 prefix: my_magento_store
 
+## Magento 1.9.4.4
+In 1.9.4.4 the password column of admin is changed to VARCHAR 255, which is too short for this module. I hope the coreHack.sql fixes this.
 
 ## For Developers
 
@@ -36,8 +38,6 @@ Thanks to  Ivan Chepurnyi and the EcomDev team for writing EcomDev_PHPUnit: http
 Thanks to Anthony Ferrara who built PHP-CryptLib and provides test vectors for pbkdf2 and sha512 (https://github.com/ircmaxell/PHP-CryptLib)
 
 ##Attention!
-Don't use it in production before testing! We can't accept any responsability for this code at the moment.
-
 This Module changes the password creation and validation of magento.
 
 ## Parameter and Defaults
