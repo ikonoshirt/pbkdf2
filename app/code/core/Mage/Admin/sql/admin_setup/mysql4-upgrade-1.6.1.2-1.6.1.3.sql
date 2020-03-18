@@ -1,0 +1,1 @@
+-- This file is to overwrite app/code/core/Mage/Admin/sql/admin_setup/upgrade-1.6.1.2-1.6.1.3.php and avoid change of the password column
