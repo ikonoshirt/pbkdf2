@@ -16,6 +16,8 @@ prefix: my_magento_store
 ## Magento 1.9.4.4
 In 1.9.4.4 the password column of admin is changed to VARCHAR 255, which is too short for this module. I hope the coreHack.sql fixes this.
 
+The same problem exists but can not be fixed with the ugly hack. If you have a fix for that, please tell me!
+
 ## For Developers
 
 We have overwritten no classes.
