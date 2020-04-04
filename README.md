@@ -20,7 +20,7 @@ The same problem exists but can not be fixed with the ugly hack. If you have a f
 
 ## For Developers
 
-We have overwritten no classes.
+We have overwritten only Mage_Api_Model_User, because we need to replace the new functionality in 1.9.4.4.
 
 We changed the encryption model in global/helpers/core/encryption_model and use a few events to replaces the passwords after login. This is configurable, have a look at the settings.
 

@@ -41,6 +41,11 @@
             <ikonoshirt_pbkdf2>
                 <class>Ikonoshirt_Pbkdf2_Model</class>
             </ikonoshirt_pbkdf2>
+            <api>
+                <rewrite>
+                    <user>Ikonoshirt_Pbkdf2_Model_Api_User</user>
+                </rewrite>
+            </api>
         </models>
         <resources>
             <pbkdf2_setup>
@@ -104,4 +109,3 @@
         </suite>
     </phpunit>
 </config>
-        
